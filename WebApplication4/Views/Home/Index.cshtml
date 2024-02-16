@@ -1,0 +1,122 @@
+﻿@using System.Runtime.InteropServices.JavaScript
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.IdentityModel.Logging
+@model List<WebApplication4.Models.Event>
+
+
+
+<h1>All Events</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Events</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .action-button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .user-list {
+            width: 100%;
+            margin: 0 auto;
+        }
+        .user-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .user-list th, .user-list td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .user-list th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .user-list tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .user-list tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="user-list">
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Location</th>
+                
+                
+            </tr>
+            </thead>
+            <tbody id="userTableBody">
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+
+<script>
+    $(function () {
+            getEvents();
+        });
+    function getEvents() {
+            $.ajax({
+                url: '/Event/GetAllEvents/',
+                type: 'GET',
+                success: function (data) {
+                    
+                    
+                    renderEvents(data);
+                },
+                error: function (xhr, status, error) {
+                    
+                    console.error('Error:', error);
+                }
+            });
+        };
+    function renderEvents(events) {
+            var tableBody = $('#userTableBody');
+            tableBody.empty();
+            
+                events.forEach(function (event) {
+                
+                var row = $('<tr>');
+                var ref = "http://localhost:5040/Event/ShowEvent/" + event.id;
+                var strEvent= "" + event.title;
+                row.append('<td>' +  '<a href=' + ref + ' > ' + strEvent + '</a>' + '</td>');
+                row.append('<td>' + event.date.trim() + '</td>');
+                row.append('<td>' + event.location + '</td>');
+                
+            
+                tableBody.append(row);
+            });
+        }
+</script>
+

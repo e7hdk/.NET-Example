@@ -1,0 +1,129 @@
+
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .action-button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .user-list {
+            width: 50%;
+            margin: 0 auto;
+        }
+        .user-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .user-list th, .user-list td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .user-list th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .user-list tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .user-list tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<h1>User Management</h1>
+
+<div class="container">
+    <div>
+        <h2>Actions</h2>
+        <button class="action-button" onclick="window.location.href='/User/AddUser'">Add User</button>
+        <button class="action-button" onclick="window.location.href='/User/UpdateUser'">Change Users</button>
+        <button class="action-button" onclick="window.location.href='/User/DeleteUser'">Delete User</button>
+    </div>
+    <div class="user-list">
+        <h2>User List</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Gender</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody id="userTableBody">
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    
+    $(function () {
+        getUsers();
+    });
+
+    function getUsers() {
+        $.ajax({
+            url: '/User/GetAllUsers/',
+            type: 'GET',
+            success: function (data) {
+                
+                
+                renderUserTable(data);
+            },
+            error: function (xhr, status, error) {
+                
+                console.error('Hata:', error);
+            }
+        });
+    }
+
+    function renderUserTable(users) {
+        var tableBody = $('#userTableBody');
+        tableBody.empty();
+        users.forEach(function (user) {
+            var row = $('<tr>');
+            row.append('<td>' + user.id + '</td>');
+            row.append('<td>' + user.name + '</td>');
+            row.append('<td>' + user.email + '</td>');
+            row.append('<td>' + user.gender + '</td>');
+            row.append('<td>' + user.status + '</td>');
+            tableBody.append(row);
+        });
+    }
+</script>
+
+</body>
+</html>

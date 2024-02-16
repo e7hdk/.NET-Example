@@ -1,0 +1,162 @@
+@model WebApplication4.Models.AddUserViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Delete User</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                padding: 20px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            th, td {
+                padding: 10px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            th {
+                background-color: #4CAF50;
+                color: white;
+            }
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            tr:hover {
+                background-color: #ddd;
+            }
+            button {
+                padding: 5px 10px;
+                border: none;
+                background-color: #008CBA;
+                color: white;
+                cursor: pointer;
+                border-radius: 3px;
+            }
+            button:hover {
+                background-color: #005f6b;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.4);
+                padding-top: 60px;
+            }
+            .modal-content {
+                background-color: #fefefe;
+                margin: 5% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 50%;
+                border-radius: 5px;
+            }
+            .modal input[type=text], .modal input[type=email], .modal select {
+                width: 100%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            .modal button {
+                background-color: #4CAF50;
+            }
+        </style>
+</head>
+<body>
+
+<table id="userTable">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Gender</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+        
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        
+        getUsers();
+    });
+
+    function getUsers() {
+        $.ajax({
+            url: '/User/GetAllUsers/',
+            type: 'GET',
+            success: function (data) {
+                
+                
+                renderUserTable(data);
+            },
+            error: function (xhr, status, error) {
+                
+                console.error('Hata:', error);
+            }
+        });
+    }
+
+    function renderUserTable(users) {
+        var tableBody = $('#userTable tbody');
+        tableBody.empty();
+        users.forEach(function (user) {
+            var row = $('<tr>');
+            row.append('<td>' + user.id + '</td>');
+            row.append('<td>' + user.name + '</td>');
+            row.append('<td>' + user.email + '</td>');
+            row.append('<td>' + user.gender + '</td>');
+            row.append('<td>' + user.status + '</td>');
+            var deleteButton = $('<button>Delete</button>');
+            deleteButton.click(function () {
+                deleteUser(user.id);
+            });
+            row.append($('<td>').append(deleteButton));
+            tableBody.append(row);
+        });
+    }
+
+    function deleteUser(userId) {
+        $.ajax({
+            url: '/User/DeleteUser/',
+            data: {userId: userId},
+            type: 'DELETE',
+            success: function () {
+                
+                getUsers(); 
+            },
+            error: function (xhr, status, error) {
+                
+                console.error('Hata:', error);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
